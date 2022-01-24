@@ -104,6 +104,21 @@ public final class Mouse extends GridObject implements IMouse {
             lock.unlock();
         }
     }
+    
+    @Override
+    public boolean canMove() {
+        switch (getRotation()) {
+        case NORTH:
+            return !getGrid().hasObjectAt(getX(), getY() - 1, IBlock.class);
+        case EAST:
+            return !getGrid().hasObjectAt(getX() + 1, getY(), IBlock.class);
+        case SOUTH:
+            return !getGrid().hasObjectAt(getX(), getY() + 1, IBlock.class);
+        case WEST:
+            return !getGrid().hasObjectAt(getX() - 1, getY(), IBlock.class);
+        }
+        return true;
+    }
 
     private void internalMove() {
         switch (getRotation()) {
