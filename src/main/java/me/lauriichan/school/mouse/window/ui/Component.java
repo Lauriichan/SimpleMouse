@@ -1,8 +1,8 @@
 package me.lauriichan.school.mouse.window.ui;
 
+import me.lauriichan.school.mouse.util.Area;
+import me.lauriichan.school.mouse.util.Point;
 import me.lauriichan.school.mouse.window.input.InputProvider;
-import me.lauriichan.school.mouse.window.util.Area;
-import me.lauriichan.school.mouse.window.util.Point;
 
 public abstract class Component implements IComponent {
 

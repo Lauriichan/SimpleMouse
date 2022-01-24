@@ -1,6 +1,6 @@
 package me.lauriichan.school.mouse.window.ui;
 
-import me.lauriichan.school.mouse.window.util.Area;
+import me.lauriichan.school.mouse.util.Area;
 
 public interface IComponent {
 

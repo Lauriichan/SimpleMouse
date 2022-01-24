@@ -1,4 +1,4 @@
-package me.lauriichan.school.mouse.window.util;
+package me.lauriichan.school.mouse.util;
 
 public final class Point {
 

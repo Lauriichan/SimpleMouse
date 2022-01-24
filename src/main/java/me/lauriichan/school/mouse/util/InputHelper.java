@@ -1,4 +1,4 @@
-package me.lauriichan.school.mouse.window.util;
+package me.lauriichan.school.mouse.util;
 
 import me.lauriichan.school.mouse.window.input.mouse.MouseHover;
 import me.lauriichan.school.mouse.window.ui.Component;

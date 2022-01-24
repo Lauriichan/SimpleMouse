@@ -10,10 +10,10 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import me.lauriichan.school.mouse.util.Area;
 import me.lauriichan.school.mouse.util.tick.Ticker;
 import me.lauriichan.school.mouse.window.input.InputProvider;
 import me.lauriichan.school.mouse.window.ui.component.bar.SimpleRootBar;
-import me.lauriichan.school.mouse.window.util.Area;
 
 public final class Panel extends Component {
 

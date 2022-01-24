@@ -37,11 +37,12 @@ final class InputReceiver<I extends Input> {
         return method;
     }
     
+    @SuppressWarnings("deprecation")
     public void accept(Input input) {
         if (!type.isAssignableFrom(input.getClass())) {
             return;
         }
-        if (!method.canAccess(input)) {
+        if (!method.isAccessible()) {
             method.setAccessible(true);
             try {
                 method.invoke(instance, input);

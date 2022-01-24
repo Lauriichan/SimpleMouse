@@ -1,8 +1,8 @@
 package me.lauriichan.school.mouse.window.input.mouse;
 
+import me.lauriichan.school.mouse.util.Point;
 import me.lauriichan.school.mouse.window.input.Input;
 import me.lauriichan.school.mouse.window.input.InputProvider;
-import me.lauriichan.school.mouse.window.util.Point;
 
 public class MouseClick extends Input {
 

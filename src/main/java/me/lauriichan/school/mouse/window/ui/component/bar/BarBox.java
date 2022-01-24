@@ -6,9 +6,9 @@ import java.util.function.BiConsumer;
 
 import me.lauriichan.school.mouse.window.ui.ITriggerComponent;
 import me.lauriichan.school.mouse.window.ui.animation.Animators;
+import me.lauriichan.school.mouse.util.Area;
 import me.lauriichan.school.mouse.window.input.mouse.MouseButton;
 import me.lauriichan.school.mouse.window.ui.animation.FadeAnimation;
-import me.lauriichan.school.mouse.window.util.Area;
 
 public final class BarBox implements ITriggerComponent {
 

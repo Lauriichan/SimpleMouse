@@ -1,6 +1,6 @@
 package me.lauriichan.school.mouse.window.ui.animation;
 
-import me.lauriichan.school.mouse.window.util.TimeHelper;
+import me.lauriichan.school.mouse.util.TimeHelper;
 
 public final class FadeAnimation<E> implements IAnimation<E> {
 

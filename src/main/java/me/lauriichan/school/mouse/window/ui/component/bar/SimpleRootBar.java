@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import me.lauriichan.school.mouse.util.Area;
+import me.lauriichan.school.mouse.util.IBoxRenderer;
 import me.lauriichan.school.mouse.window.input.Listener;
 import me.lauriichan.school.mouse.window.input.mouse.MouseButton;
 import me.lauriichan.school.mouse.window.input.mouse.MouseClick;
@@ -12,8 +14,6 @@ import me.lauriichan.school.mouse.window.input.mouse.MouseDrag;
 import me.lauriichan.school.mouse.window.input.mouse.MouseHover;
 import me.lauriichan.school.mouse.window.ui.Panel;
 import me.lauriichan.school.mouse.window.ui.RootBar;
-import me.lauriichan.school.mouse.window.util.Area;
-import me.lauriichan.school.mouse.window.util.IBoxRenderer;
 
 public final class SimpleRootBar extends RootBar {
 
