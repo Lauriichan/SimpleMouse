@@ -17,9 +17,11 @@ public class Sprite extends Component {
     private final int imgWidth;
     private final int imgHeight;
 
-    private final AffineTransform transform = new AffineTransform();
+    private final int imgWidthHalf;
+    private final int imgHeightHalf;
 
     private Rotation rotation;
+    private int amount = 0;
 
     public Sprite(Image image) {
         this(image, Rotation.NORTH);
@@ -31,6 +33,8 @@ public class Sprite extends Component {
         setRotation(original);
         this.imgWidth = image.getWidth(null);
         this.imgHeight = image.getHeight(null);
+        this.imgWidthHalf = imgWidth / 2;
+        this.imgHeightHalf = imgHeight / 2;
         setWidth(imgWidth);
         setHeight(imgHeight);
     }
@@ -39,11 +43,8 @@ public class Sprite extends Component {
         if (rotation == this.rotation) {
             return;
         }
-        if (this.rotation != original && this.rotation != null) {
-            transform.quadrantRotate(original.ordinal() - this.rotation.ordinal(), imgWidth / 2, imgHeight / 2);
-        }
         this.rotation = Objects.requireNonNull(rotation);
-        transform.quadrantRotate(rotation.ordinal() - original.ordinal(), imgWidth / 2, imgHeight / 2);
+        this.amount = (rotation.ordinal() - original.ordinal());
     }
 
     public Rotation getRotation() {
@@ -54,6 +55,8 @@ public class Sprite extends Component {
     public void render(Area area) {
         Graphics2D graphics = area.getGraphics();
         AffineTransform old = graphics.getTransform();
+        AffineTransform transform = (AffineTransform) old.clone();
+        transform.quadrantRotate(amount, imgWidthHalf, imgHeightHalf);
         graphics.setTransform(transform);
         graphics.drawImage(image, 0, 0, imgWidth, imgHeight, null);
         graphics.setTransform(old);

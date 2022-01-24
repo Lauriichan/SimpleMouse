@@ -1,18 +1,24 @@
 package me.lauriichan.school.mouse.api;
 
+import me.lauriichan.school.mouse.api.exception.MouseNoCheeseException;
+import me.lauriichan.school.mouse.api.exception.MouseNoSpaceException;
 import me.lauriichan.school.mouse.util.Rotation;
 
 public interface IMouse extends IObject {
 
-    void eat();
+    void eat() throws MouseNoCheeseException;
 
-    void move();
+    void move() throws MouseNoSpaceException;
 
     void turnLeft();
 
     void turnRight();
 
     int getCheese();
+    
+    int getSpeed();
+    
+    void setSpeed(int speed);
 
     Rotation getRotation();
 

@@ -4,16 +4,19 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
+import me.lauriichan.school.mouse.api.IBlock;
 import me.lauriichan.school.mouse.api.IMouse;
 import me.lauriichan.school.mouse.api.IRemember;
 import me.lauriichan.school.mouse.api.exception.MouseException;
+import me.lauriichan.school.mouse.api.exception.MouseNoCheeseException;
 import me.lauriichan.school.mouse.api.exception.MouseNoSpaceException;
 import me.lauriichan.school.mouse.api.exception.MouseRememberException;
+import me.lauriichan.school.mouse.grid.Grid;
 import me.lauriichan.school.mouse.grid.GridObject;
 import me.lauriichan.school.mouse.grid.GridSprite;
 import me.lauriichan.school.mouse.util.ImageCache;
 import me.lauriichan.school.mouse.util.Rotation;
-import me.lauriichan.school.mouse.window.ui.Pane;
+import me.lauriichan.school.mouse.window.ui.DragPane;
 
 public final class Mouse extends GridObject implements IMouse {
 
@@ -28,11 +31,25 @@ public final class Mouse extends GridObject implements IMouse {
 
     private final ArrayList<MouseRemember> remembers = new ArrayList<>();
 
-    private final long wait;
     private final ReentrantLock lock = new ReentrantLock();
 
+    private long wait = 1000;
+    private int speed = 1;
+    
+    private int cheese = 0;
+
     public Mouse(int speed) {
-        this.wait = (1000 / Math.min(Math.max(speed, 1), 20));
+        setSpeed(speed);
+    }
+
+    @Override
+    public void setSpeed(int speed) {
+        this.wait = (1000 / (this.speed = Math.min(Math.max(speed, 1), 20)));
+    }
+
+    @Override
+    public int getSpeed() {
+        return speed;
     }
 
     public GridSprite getSprite() {
@@ -40,12 +57,12 @@ public final class Mouse extends GridObject implements IMouse {
     }
 
     @Override
-    protected void onRegisterComponents(Pane pane) {
+    protected void onRegisterComponents(DragPane pane) {
         pane.addChild(sprite);
     }
 
     @Override
-    protected void onUnregisterComponents(Pane pane) {
+    protected void onUnregisterComponents(DragPane pane) {
         pane.removeChild(sprite);
     }
 
@@ -54,48 +71,68 @@ public final class Mouse extends GridObject implements IMouse {
         lock.lock();
         try {
             action(exeEat);
+            internalEat();
             sleep();
         } finally {
             lock.unlock();
         }
+    }
+    
+    private void internalEat() {
+        Cheese[] cheeses = getGrid().getObjectsAt(getX(), getY(), Cheese.class);
+        if(cheeses.length == 0) {
+            throw new MouseNoCheeseException(String.format("There is no cheese at (%s, %s)", getX(), getY()));
+        }
+        for(int i = 0; i < cheeses.length; i++) {
+            Cheese cheese = cheeses[i];
+            if(cheese.getAmount() != 0) {
+                cheese.setAmount(cheese.getAmount() - 1);
+                return;
+            }
+        }
+        throw new MouseNoCheeseException(String.format("There is no cheese at (%s, %s)", getX(), getY()));
     }
 
     @Override
     public void move() {
         lock.lock();
         try {
-            internalMove();
             action(exeMove);
+            internalMove();
             sleep();
         } finally {
             lock.unlock();
         }
     }
-    
+
     private void internalMove() {
-        switch(getRotation()) {
+        switch (getRotation()) {
         case NORTH:
-            setY(getY() + 1);
+            setY(getY() - 1);
             break;
         case EAST:
             setX(getX() + 1);
             break;
         case SOUTH:
-            setY(getY() - 1);
+            setY(getY() + 1);
             break;
         case WEST:
             setX(getX() - 1);
             break;
         }
     }
-    
+
+    @Override
+    protected boolean isMoveAllowed(Grid grid, int x, int y) {
+        return !grid.hasObjectAt(x, y, IBlock.class);
+    }
+
     @Override
     protected void onMoveSuccess(int x, int y) {
         sprite.setX(asGridPosition(x));
         sprite.setY(asGridPosition(y));
-        System.out.println(sprite.getX());
     }
-    
+
     @Override
     protected void onMoveFailed(int x, int y) {
         throw new MouseNoSpaceException(String.format("Can't move to (%s, %s)", x, y));
@@ -105,8 +142,8 @@ public final class Mouse extends GridObject implements IMouse {
     public void turnLeft() {
         lock.lock();
         try {
-            sprite.setRotation(sprite.getRotation().left());
             action(exeLeft);
+            sprite.setRotation(sprite.getRotation().left());
             sleep();
         } finally {
             lock.unlock();
@@ -117,8 +154,8 @@ public final class Mouse extends GridObject implements IMouse {
     public void turnRight() {
         lock.lock();
         try {
-            sprite.setRotation(sprite.getRotation().right());
             action(exeRight);
+            sprite.setRotation(sprite.getRotation().right());
             sleep();
         } finally {
             lock.unlock();
@@ -126,6 +163,9 @@ public final class Mouse extends GridObject implements IMouse {
     }
 
     private void sleep() {
+        if (!getGrid().getPanel().isRunning()) {
+            return;
+        }
         try {
             Thread.sleep(wait);
         } catch (InterruptedException e) {
@@ -146,7 +186,7 @@ public final class Mouse extends GridObject implements IMouse {
 
     @Override
     public int getCheese() {
-        return 0;
+        return cheese;
     }
 
     @Override
@@ -210,7 +250,7 @@ public final class Mouse extends GridObject implements IMouse {
             if (redoing) {
                 throw new MouseRememberException("Currently repeating learned actions");
             }
-            if(size == -1) {
+            if (size == -1) {
                 throw new MouseRememberException("Already learning actions");
             }
             actions.clear();

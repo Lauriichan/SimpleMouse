@@ -82,11 +82,11 @@ public final class InputProvider {
             return;
         }
         InputReceiver<?>[] receivers = list.toArray(new InputReceiver<?>[list.size()]);
-        for (InputReceiver<?> receiver : receivers) {
-            if (!receiver.canReceive()) {
+        for (int i = receivers.length - 1; i >= 0; i--) {
+            if (!receivers[i].canReceive()) {
                 continue;
             }
-            receiver.accept(input);
+            receivers[i].accept(input);
         }
     }
 

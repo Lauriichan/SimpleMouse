@@ -8,13 +8,14 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import me.lauriichan.school.mouse.util.Area;
+import me.lauriichan.school.mouse.util.DynamicArray;
 import me.lauriichan.school.mouse.window.input.Listener;
 import me.lauriichan.school.mouse.window.input.mouse.MouseButton;
 import me.lauriichan.school.mouse.window.input.mouse.MouseDrag;
 import me.lauriichan.school.mouse.window.input.mouse.MousePress;
 import me.lauriichan.school.mouse.window.input.mouse.MouseScroll;
 
-public class DragPane extends BasicPane {
+public class DragPane extends Pane {
 
     private int currentY = 0;
     private int currentX = 0;
@@ -44,8 +45,52 @@ public class DragPane extends BasicPane {
     private final Lock writeLock = lock.writeLock();
     private final Lock readLock = lock.readLock();
 
+    private final DynamicArray<Component> components = new DynamicArray<>();
+
     public DragPane() {
         updateBuffer();
+    }
+
+    @Override
+    public boolean addChild(Component component) {
+        if (components.indexOf(component) != -1) {
+            return false;
+        }
+        components.add(component);
+        return true;
+    }
+
+    public boolean addChildBack(Component component) {
+        if (components.indexOf(component) != -1) {
+            return false;
+        }
+        components.addBack(component);
+        return true;
+    }
+
+    @Override
+    public boolean removeChild(Component component) {
+        int index = components.indexOf(component);
+        if (index == -1) {
+            return false;
+        }
+        components.remove(index);
+        return true;
+    }
+
+    @Override
+    public int getChildrenCount() {
+        return components.length();
+    }
+
+    @Override
+    public Component getChild(int index) {
+        return components.get(index);
+    }
+
+    @Override
+    public Component[] getChildren() {
+        return components.asArray(Component[]::new);
     }
 
     public int getContentSizeX() {
@@ -85,7 +130,7 @@ public class DragPane extends BasicPane {
                 buffer.flush();
             }
             buffer = new BufferedImage(contentSizeX, contentSizeY, BufferedImage.TYPE_INT_ARGB);
-            bufferArea = new Area((Graphics2D) buffer.getGraphics(), background, -1, -1, 0, 0);
+            bufferArea = new Area((Graphics2D) buffer.getGraphics(), background, -1, -1, contentSizeX, contentSizeY);
         } finally {
             writeLock.unlock();
         }
@@ -99,7 +144,7 @@ public class DragPane extends BasicPane {
         try {
             output = buffer;
             outputArea = bufferArea;
-            super.render(bufferArea);
+            renderChildren(bufferArea);
         } finally {
             readLock.unlock();
         }
@@ -109,7 +154,28 @@ public class DragPane extends BasicPane {
         drawBars(area);
     }
 
-    int t;
+    private void renderChildren(Area area) {
+        Component[] children = getChildren();
+        for (int i = 0; i < children.length; i++) {
+            Component component = children[i];
+            if (component.isHidden()) {
+                continue;
+            }
+            component.render(area.create(component.getX(), component.getY(), component.getWidth(), component.getHeight()));
+        }
+    }
+
+    @Override
+    public void update(long deltaTime) {
+        Component[] children = getChildren();
+        for (int i = 0; i < children.length; i++) {
+            Component component = children[i];
+            if (!component.isUpdating()) {
+                continue;
+            }
+            component.update(deltaTime);
+        }
+    }
 
     private void drawBuffer(Area area, BufferedImage buffer) {
         int width = area.getWidth();
@@ -131,7 +197,6 @@ public class DragPane extends BasicPane {
         int ix = size.getX() >= (contentSizeX * zoom) ? (int) (((area.getWidth() - iWidth) / 2)) : 0;
         int iy = size.getY() >= (contentSizeY * zoom) ? (int) (((area.getHeight() - iHeight) / 2)) : 0;
         area.getGraphics().drawImage(image, ix, iy, ix + width, iy + height, currentX, currentY, currentX + width, currentY + height, null);
-        image.flush();
     }
 
     private void drawBars(Area area) {
@@ -181,13 +246,13 @@ public class DragPane extends BasicPane {
             int tmp = (int) Math.floor(contentSizeX * zoom) - size.getX();
             if (tmp > 0 && (currentX * 2f) > tmp) {
                 currentX = tmp;
-            } else if(tmp <= 0) {
+            } else if (tmp <= 0) {
                 currentX = 0;
             }
             tmp = (int) Math.floor(contentSizeY * zoom) - size.getY();
             if (tmp > 0 && (currentY * 2f) > tmp) {
                 currentY = tmp;
-            } else if(tmp <= 0) {
+            } else if (tmp <= 0) {
                 currentY = 0;
             }
         }
@@ -234,6 +299,19 @@ public class DragPane extends BasicPane {
         }
         moveX = press.getX();
         moveY = press.getY();
+    }
+
+    @Override
+    public void setBar(Bar<?> bar) {}
+
+    @Override
+    public Bar<?> getBar() {
+        return null;
+    }
+
+    @Override
+    public boolean hasBar() {
+        return false;
     }
 
 }

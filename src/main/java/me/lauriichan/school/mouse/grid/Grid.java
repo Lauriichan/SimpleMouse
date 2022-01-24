@@ -56,7 +56,9 @@ public abstract class Grid implements IGrid {
 
     protected abstract void onGridSetup();
     
-    public abstract boolean add(Stage stage, GridObject object);
+    public abstract boolean add(GridObject object);
+    
+    public abstract boolean remove(GridObject object);
     
     abstract void notify(GridObject object);
 

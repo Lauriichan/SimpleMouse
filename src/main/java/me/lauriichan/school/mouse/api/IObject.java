@@ -8,6 +8,10 @@ public interface IObject {
     
     IGrid getGrid();
     
+    default boolean isBlocking() {
+        return false;
+    }
+    
     default boolean hasType(Class<?> type) {
         return type.isAssignableFrom(getClass());
     }

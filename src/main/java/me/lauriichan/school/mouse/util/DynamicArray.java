@@ -28,6 +28,10 @@ public final class DynamicArray<E> {
         this.array = new Object[size];
         this.expand = expand;
     }
+    
+    public int length() {
+        return size;
+    }
 
     public E get(int index) {
         if (isNull(index)) {
@@ -68,6 +72,21 @@ public final class DynamicArray<E> {
         }
         array[index] = value;
         return true;
+    }
+
+    public DynamicArray<E> addBack(E value) {
+        expand();
+        write.lock();
+        try {
+            for(int i = size; i > 0; i--) {
+                array[i] = array[i - 1];
+            }
+            array[0] = value;
+            size += 1;
+        } finally {
+            write.unlock();
+        }
+        return this;
     }
 
     public DynamicArray<E> add(E value) {
