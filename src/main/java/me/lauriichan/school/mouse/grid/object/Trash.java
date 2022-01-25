@@ -19,8 +19,8 @@ public class Trash extends GridObject implements IBlock {
     }
 
     @Override
-    protected void onRegisterComponents(DragPane pane) {
-        pane.addChild(sprite);
+    protected void onRegisterComponents(int idx, DragPane pane) {
+        pane.addChildAt(idx, sprite);
     }
 
     @Override

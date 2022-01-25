@@ -17,7 +17,7 @@ public class Cheese extends GridObject implements ICheese {
     private int amount;
 
     public Cheese(int amount) {
-        setAmount(amount);
+        this.amount = Math.max(Math.abs(amount), 1);
     }
 
     public GridSprite getSprite() {
@@ -25,8 +25,8 @@ public class Cheese extends GridObject implements ICheese {
     }
 
     @Override
-    protected void onRegisterComponents(DragPane pane) {
-        pane.addChildBack(sprite);
+    protected void onRegisterComponents(int idx, DragPane pane) {
+        pane.addChildAt(idx, sprite);
     }
 
     @Override

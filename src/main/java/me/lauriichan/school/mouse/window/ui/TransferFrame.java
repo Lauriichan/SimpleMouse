@@ -44,6 +44,10 @@ final class TransferFrame extends JFrame {
     @Override
     public void setSize(int width, int height) {
         super.setSize(width, height);
+        updateBuffer(width, height);
+    }
+    
+    public void updateBuffer(int width, int height) {
         image = new BufferedImage(Math.max(1, width), Math.max(1, height), BufferedImage.TYPE_INT_ARGB);
         buffer = image.createGraphics();
         buffer.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);

@@ -22,6 +22,7 @@ public class SimpleGrid extends Grid {
     private final DynamicArray<GridObject> objects = new DynamicArray<>();
     private final Builder builder = new Builder(this);
     private GridObject[] array = new GridObject[0];
+    private int backgroundIdx;
     
     @Override
     public IBuilder getBuilder() {
@@ -40,6 +41,7 @@ public class SimpleGrid extends Grid {
     @Override
     protected void onGridSetup() {
         int col = 0;
+        int idx = 0;
         for (int k = 0; k < amount.getY(); k++) {
             for (int i = 0; i < amount.getX(); i++) {
                 Rectangle rect = new Rectangle();
@@ -49,9 +51,15 @@ public class SimpleGrid extends Grid {
                 rect.setX(size * i);
                 rect.setY(size * k);
                 pane.addChild(rect);
+                idx++;
             }
             col++;
         }
+        backgroundIdx = idx;
+    }
+    
+    public int getBackgroundIdx() {
+        return backgroundIdx;
     }
 
     @Override
@@ -195,7 +203,7 @@ public class SimpleGrid extends Grid {
                 list.add(type.cast(object));
             }
         }
-        return list.toArray((E[]) Array.newInstance(type, size));
+        return list.toArray((E[]) Array.newInstance(type, list.size()));
     }
 
     @Override

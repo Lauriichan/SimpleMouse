@@ -60,11 +60,11 @@ public class DragPane extends Pane {
         return true;
     }
 
-    public boolean addChildBack(Component component) {
+    public boolean addChildAt(int i, Component component) {
         if (components.indexOf(component) != -1) {
             return false;
         }
-        components.addBack(component);
+        components.addAt(i, component);
         return true;
     }
 

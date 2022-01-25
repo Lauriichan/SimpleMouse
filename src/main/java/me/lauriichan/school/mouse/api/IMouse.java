@@ -10,8 +10,10 @@ public interface IMouse extends IObject {
 
     void move() throws MouseNoSpaceException;
     
+    boolean smellsCheese();
+    
     boolean canMove();
-
+    
     void turnLeft();
 
     void turnRight();

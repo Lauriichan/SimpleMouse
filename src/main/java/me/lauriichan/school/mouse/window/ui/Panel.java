@@ -1,6 +1,7 @@
 package me.lauriichan.school.mouse.window.ui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
@@ -15,23 +16,23 @@ import me.lauriichan.school.mouse.util.tick.Ticker;
 import me.lauriichan.school.mouse.window.input.InputProvider;
 import me.lauriichan.school.mouse.window.ui.component.bar.SimpleRootBar;
 
-public final class Panel extends Component {
+public class Panel extends Component {
 
     private static final AtomicInteger ID = new AtomicInteger(0);
 
-    private final Frame frame;
+    protected final TransferFrame frame;
 
-    private final RootBar bar;
-    private final Pane pane;
+    protected final RootBar bar;
+    protected final Pane pane;
 
-    private final InputProvider input;
+    protected final InputProvider input;
 
-    private final int id = ID.getAndIncrement();
-    private final Ticker renderTick = new Ticker("Render - " + id);
-    private final Ticker updateTick = new Ticker("Update - " + id);
+    protected final int id = ID.getAndIncrement();
+    protected final Ticker renderTick = new Ticker("Render - " + id);
+    protected final Ticker updateTick = new Ticker("Update - " + id);
 
-    private Color background = Color.BLACK;
-    private Font font = new Font("Open Sans", Font.PLAIN, 12);
+    protected Color background = Color.BLACK;
+    protected Font font = new Font("Open Sans", Font.PLAIN, 12);
     
     private boolean shouldExit = false;
 
@@ -113,7 +114,7 @@ public final class Panel extends Component {
     @Override
     public void setHeight(int height) {
         super.setHeight(height);
-        pane.setHeight(height);
+        pane.setHeight(height - bar.getHeight());
         frame.setSize(getWidth(), height);
     }
 
@@ -128,6 +129,7 @@ public final class Panel extends Component {
         bar.setHeight(height);
         pane.setY(height);
         pane.setHeight(getHeight() - height);
+        frame.setMinimumSize(new Dimension(10, height + 10));
     }
 
     public int getBarHeight() {
@@ -245,6 +247,19 @@ public final class Panel extends Component {
 
     public void minimize() {
         frame.setExtendedState(frame.getExtendedState() | Frame.ICONIFIED);
+    }
+    
+    public void maximize() {
+        if((frame.getExtendedState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH) {
+            frame.setExtendedState(Frame.NORMAL);
+        } else {
+            frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+        }
+        size.setX(frame.getWidth());
+        size.setY(frame.getHeight());
+        pane.setWidth(size.getX());
+        pane.setHeight(size.getY() - bar.getHeight());
+        frame.updateBuffer(size.getX(), size.getY());
     }
 
     public String getTitle() {

@@ -24,7 +24,7 @@ public abstract class GridObject implements IObject {
         position.setX(-1);
         position.setY(-1);
         onGridUpdate(grid);
-        onRegisterComponents(grid.getPane());
+        onRegisterComponents(grid.getBackgroundIdx(), grid.getPane());
     }
     
     protected void update(long deltaTime) {}
@@ -35,7 +35,7 @@ public abstract class GridObject implements IObject {
 
     protected void onGridUpdate(Grid grid) {}
 
-    protected void onRegisterComponents(DragPane pane) {}
+    protected void onRegisterComponents(int idx, DragPane pane) {}
 
     protected void onUnregisterComponents(DragPane pane) {}
 

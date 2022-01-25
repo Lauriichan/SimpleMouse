@@ -20,4 +20,9 @@ public final class BoxRenderers {
         area.drawLine(offset, size / 2 + offset, size / 2 + offset, size + offset, thickness, color);
     };
 
+    public static final IBoxRenderer WINDOW = (area, color, offset, size, thickness) -> {
+        area.drawRectangle(offset, offset, size + offset, size + offset, color);
+        area.drawRectangle(offset + thickness, offset + thickness, size + offset - thickness * 2, size + offset - thickness * 2);
+    };
+
 }

@@ -28,7 +28,7 @@ public final class DynamicArray<E> {
         this.array = new Object[size];
         this.expand = expand;
     }
-    
+
     public int length() {
         return size;
     }
@@ -74,14 +74,17 @@ public final class DynamicArray<E> {
         return true;
     }
 
-    public DynamicArray<E> addBack(E value) {
+    public DynamicArray<E> addAt(int idx, E value) {
+        if (idx > (size + 1) || idx < 0) {
+            return this;
+        }
         expand();
         write.lock();
         try {
-            for(int i = size; i > 0; i--) {
+            for(int i = size; i > idx; i--) {
                 array[i] = array[i - 1];
             }
-            array[0] = value;
+            array[idx] = value;
             size += 1;
         } finally {
             write.unlock();

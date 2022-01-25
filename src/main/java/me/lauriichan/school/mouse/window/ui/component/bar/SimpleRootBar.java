@@ -100,6 +100,8 @@ public final class SimpleRootBar extends RootBar {
 
     @Override
     public void render(Area area) {
+        Color color = area.getColor();
+        area.setColor(background);
         area.fill(background);
         BarBox[] boxes = getAll();
         int next = (boxOffset * 2) + size;
@@ -107,6 +109,7 @@ public final class SimpleRootBar extends RootBar {
         for (int index = 0; index < boxes.length; index++) {
             boxes[index].render(area.create(distance - (next * index), boxOffset, size, size));
         }
+        area.setColor(color);
     }
 
     @Override

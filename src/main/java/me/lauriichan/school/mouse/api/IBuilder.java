@@ -1,5 +1,8 @@
 package me.lauriichan.school.mouse.api;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+
 public interface IBuilder {
 
     IGrid getGrid();
@@ -14,4 +17,8 @@ public interface IBuilder {
 
     IBlock trashAt(int x, int y) throws IllegalStateException;
 
+    void loadImage(File file) throws IllegalStateException;
+
+    void loadImage(BufferedImage image) throws IllegalStateException;
+    
 }

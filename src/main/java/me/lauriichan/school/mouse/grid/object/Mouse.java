@@ -57,13 +57,18 @@ public final class Mouse extends GridObject implements IMouse {
     }
 
     @Override
-    protected void onRegisterComponents(DragPane pane) {
-        pane.addChild(sprite);
+    protected void onRegisterComponents(int idx, DragPane pane) {
+        pane.addChildAt(idx, sprite);
     }
 
     @Override
     protected void onUnregisterComponents(DragPane pane) {
         pane.removeChild(sprite);
+    }
+    
+    @Override
+    public boolean smellsCheese() {
+        return getGrid().hasObjectAt(getX(), getY(), Cheese.class);
     }
 
     @Override
@@ -85,8 +90,9 @@ public final class Mouse extends GridObject implements IMouse {
         }
         for(int i = 0; i < cheeses.length; i++) {
             Cheese cheese = cheeses[i];
-            if(cheese.getAmount() != 0) {
+            if(cheese.isAvailable()) {
                 cheese.setAmount(cheese.getAmount() - 1);
+                this.cheese += 1;
                 return;
             }
         }
@@ -109,13 +115,13 @@ public final class Mouse extends GridObject implements IMouse {
     public boolean canMove() {
         switch (getRotation()) {
         case NORTH:
-            return !getGrid().hasObjectAt(getX(), getY() - 1, IBlock.class);
+            return getGrid().isInBounds(getX(), getY() - 1) && !getGrid().hasObjectAt(getX(), getY() - 1, IBlock.class);
         case EAST:
-            return !getGrid().hasObjectAt(getX() + 1, getY(), IBlock.class);
+            return getGrid().isInBounds(getX() + 1, getY()) && !getGrid().hasObjectAt(getX() + 1, getY(), IBlock.class);
         case SOUTH:
-            return !getGrid().hasObjectAt(getX(), getY() + 1, IBlock.class);
+            return getGrid().isInBounds(getX(), getY() + 1) && !getGrid().hasObjectAt(getX(), getY() + 1, IBlock.class);
         case WEST:
-            return !getGrid().hasObjectAt(getX() - 1, getY(), IBlock.class);
+            return getGrid().isInBounds(getX() - 1, getY()) && !getGrid().hasObjectAt(getX() - 1, getY(), IBlock.class);
         }
         return true;
     }
