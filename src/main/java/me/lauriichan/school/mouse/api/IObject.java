@@ -8,6 +8,14 @@ public interface IObject {
     
     IGrid getGrid();
     
+    default double distance(IObject object) {
+        return square(getX() - object.getX()) + square(getY() - object.getY());
+    }
+    
+    private static double square(double in) {
+        return in * in;
+    }
+    
     default boolean isBlocking() {
         return false;
     }

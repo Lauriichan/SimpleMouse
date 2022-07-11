@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import com.syntaxphoenix.syntaxapi.utils.java.Exceptions;
 
+//import me.lauriichan.school.mouse.grid.object.AutoMouse;
 import me.lauriichan.school.mouse.util.ColorCache;
 import me.lauriichan.school.mouse.window.ui.Dialog;
 import me.lauriichan.school.mouse.window.ui.component.Button;
@@ -36,6 +37,9 @@ public abstract class Playfield {
         }
         try {
             onStart(grid);
+//            while (grid.hasObject(AutoMouse.class)) {
+//                Thread.sleep(100);
+//            }
         } catch (Exception exp) {
             openDialog(grid, exp);
             return;

@@ -23,12 +23,12 @@ public class SimpleGrid extends Grid {
     private final Builder builder = new Builder(this);
     private GridObject[] array = new GridObject[0];
     private int backgroundIdx;
-    
+
     @Override
     public IBuilder getBuilder() {
         return builder;
     }
-    
+
     @Override
     protected void onSetup() {
         pane.setContentSizeX(amount.getX() * size);
@@ -57,7 +57,7 @@ public class SimpleGrid extends Grid {
         }
         backgroundIdx = idx;
     }
-    
+
     public int getBackgroundIdx() {
         return backgroundIdx;
     }
@@ -122,7 +122,7 @@ public class SimpleGrid extends Grid {
         }
         return list.toArray((E[]) Array.newInstance(type, size));
     }
-    
+
     @Override
     public boolean hasObjectAt(int x, int y) {
         GridObject[] objects = array;
@@ -134,7 +134,7 @@ public class SimpleGrid extends Grid {
         }
         return false;
     }
-    
+
     @Override
     public <E extends IObject> boolean hasObjectAt(int x, int y, Class<E> type) {
         GridObject[] objects = array;
@@ -230,6 +230,13 @@ public class SimpleGrid extends Grid {
             array = objects.asArray(GridObject[]::new);
         }
         return tmp;
+    }
+
+    @Override
+    public void clear() {
+        while (objects.length() != 0) {
+            remove(objects.get(0));
+        }
     }
 
     @Override

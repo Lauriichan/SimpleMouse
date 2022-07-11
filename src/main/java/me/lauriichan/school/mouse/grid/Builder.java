@@ -11,6 +11,7 @@ import me.lauriichan.school.mouse.api.IBuilder;
 import me.lauriichan.school.mouse.api.ICheese;
 import me.lauriichan.school.mouse.api.IGrid;
 import me.lauriichan.school.mouse.api.IMouse;
+//import me.lauriichan.school.mouse.grid.object.AutoMouse;
 import me.lauriichan.school.mouse.grid.object.Cheese;
 import me.lauriichan.school.mouse.grid.object.Mouse;
 import me.lauriichan.school.mouse.grid.object.Trash;
@@ -30,10 +31,31 @@ public final class Builder implements IBuilder {
     }
 
     public IMouse mouseAt(int x, int y) {
-        return mouseAt(x, y, 0);
+        return mouseAt(x, y, 0, Color.WHITE);
     }
 
     public IMouse mouseAt(int x, int y, int speed) {
+        return mouseAt(x, y, speed, Color.WHITE);
+    }
+
+    public IMouse mouseAt(int x, int y, Color color) {
+        return mouseAt(x, y, 0, color);
+    }
+
+    public IMouse mouseAt(int x, int y, int speed, Color color) {
+        Mouse mouse = new Mouse(speed, color);
+        if (!grid.add(mouse)) {
+            throw new IllegalStateException("Failed to add Mouse!");
+        }
+        mouse.setPosition(x, y);
+        return mouse;
+    }
+
+    public IMouse mouseRandomAt(int x, int y) {
+        return mouseRandomAt(x, y, 0);
+    }
+
+    public IMouse mouseRandomAt(int x, int y, int speed) {
         Mouse mouse = new Mouse(speed);
         if (!grid.add(mouse)) {
             throw new IllegalStateException("Failed to add Mouse!");
@@ -72,12 +94,13 @@ public final class Builder implements IBuilder {
             throw new IllegalStateException("Failed to load Grid from image!", throwable);
         }
     }
-    
+
     @Override
     public void loadImage(BufferedImage image) throws IllegalStateException {
-        if(image.getWidth() != grid.getWidth() || image.getHeight() != grid.getHeight()) {
+        if (image.getWidth() != grid.getWidth() || image.getHeight() != grid.getHeight()) {
             throw new IllegalStateException("Image doesn't match Grid size!");
         }
+        grid.clear();
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
                 GridObject object = load(new Color(image.getRGB(x, y)));

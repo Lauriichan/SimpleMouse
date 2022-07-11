@@ -11,14 +11,14 @@ import me.lauriichan.school.mouse.window.ui.Component;
 
 public class Sprite extends Component {
 
-    private final Image image;
-    private final Rotation original;
+    private Image image;
+    private Rotation original;
 
-    private final int imgWidth;
-    private final int imgHeight;
+    private int imgWidth;
+    private int imgHeight;
 
-    private final int imgWidthHalf;
-    private final int imgHeightHalf;
+    private int imgWidthHalf;
+    private int imgHeightHalf;
 
     private Rotation rotation;
     private int amount = 0;
@@ -28,6 +28,10 @@ public class Sprite extends Component {
     }
 
     public Sprite(Image image, Rotation rotation) {
+        setOriginal(image, rotation);
+    }
+    
+    public void setOriginal(Image image, Rotation rotation) {
         this.image = Objects.requireNonNull(image);
         this.original = Objects.requireNonNull(rotation);
         setRotation(original);

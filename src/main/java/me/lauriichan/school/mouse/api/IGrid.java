@@ -43,13 +43,13 @@ public interface IGrid {
     <E extends IObject> E[] getObjectsAt(int x, int y, Class<E> type);
 
     boolean isHidden();
-    
+
     void setFps(int fps);
-    
+
     void setTps(int tps);
-    
+
     int getFps();
-    
+
     int getTps();
 
     void show();
@@ -59,9 +59,11 @@ public interface IGrid {
     void center();
 
     void close();
-    
+
+    void clear();
+
     void setClosingAction(Runnable action);
-    
+
     Runnable getClosingAction();
 
     /*
@@ -78,13 +80,16 @@ public interface IGrid {
 
     public static IGrid fromImage(File file) {
         try {
-            BufferedImage image = ImageIO.read(new PathSource(file.toPath()).openStream());
-            SimpleGrid grid = new SimpleGrid(image.getWidth(), image.getHeight(), 128);
-            grid.getBuilder().loadImage(image);
-            return grid;
+            return fromImage(ImageIO.read(new PathSource(file.toPath()).openStream()));
         } catch (Throwable throwable) {
             throw new IllegalStateException("Failed to load Grid from image!", throwable);
         }
+    }
+
+    public static IGrid fromImage(BufferedImage image) {
+        SimpleGrid grid = new SimpleGrid(image.getWidth(), image.getHeight(), 128);
+        grid.getBuilder().loadImage(image);
+        return grid;
     }
 
 }

@@ -127,8 +127,8 @@ public final class DynamicArray<E> {
             for (int x = index + 1; x < size; x++) {
                 array[x - 1] = array[x];
             }
-            array[size] = null;
             size--;
+            array[size] = null;
         } finally {
             write.unlock();
         }
@@ -145,8 +145,8 @@ public final class DynamicArray<E> {
             for (int x = index + 1; x < size; x++) {
                 array[x - 1] = array[x];
             }
-            array[size] = null;
             size--;
+            array[size] = null;
         } finally {
             write.unlock();
         }

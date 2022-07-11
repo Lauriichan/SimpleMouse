@@ -1,8 +1,13 @@
 package me.lauriichan.school.mouse.grid.object;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+
+import com.syntaxphoenix.syntaxapi.logging.color.ColorTools;
 
 import me.lauriichan.school.mouse.api.IBlock;
 import me.lauriichan.school.mouse.api.IMouse;
@@ -21,8 +26,36 @@ import me.lauriichan.school.mouse.window.ui.DragPane;
 public final class Mouse extends GridObject implements IMouse {
 
     private static final BufferedImage MOUSE_IMAGE = ImageCache.resource("mouse", "images/mouse.png");
+    private static final Random RANDOM = new Random(System.currentTimeMillis());
 
-    private final GridSprite sprite = new GridSprite(this, MOUSE_IMAGE);
+    private static final ConcurrentHashMap<Color, BufferedImage> COLORED_MOUSE = new ConcurrentHashMap<>();
+
+    public static BufferedImage getColored(Color color) {
+        if (COLORED_MOUSE.containsKey(color)) {
+            return COLORED_MOUSE.get(color);
+        }
+        BufferedImage image = new BufferedImage(MOUSE_IMAGE.getWidth(), MOUSE_IMAGE.getHeight(), MOUSE_IMAGE.getType());
+        MOUSE_IMAGE.copyData(image.getRaster());
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                int rgb = image.getRGB(x, y);
+                int alpha = (rgb >> 24) & 0xFF;
+                if (alpha == 0 || alpha == 255) {
+                    continue;
+                }
+                image.setRGB(x, y, new Color(merge((rgb >> 16) & 0xFF, color.getRed()), merge((rgb >> 8) & 0xFF, color.getGreen()),
+                    merge((rgb) & 0xFF, color.getBlue())).getRGB());
+            }
+        }
+        COLORED_MOUSE.put(color, image);
+        return image;
+    }
+
+    private static int merge(int c1, int c2) {
+        return (int) Math.min(Math.max(c1 * 0.3 + c2 * 0.7, 0), 255);
+    }
+
+    private final GridSprite sprite;
 
     private final Runnable exeEat = this::eat;
     private final Runnable exeMove = this::move;
@@ -35,16 +68,21 @@ public final class Mouse extends GridObject implements IMouse {
 
     private long wait = 1000;
     private int speed = 1;
-    
+
     private int cheese = 0;
 
     public Mouse(int speed) {
+        this(speed, ColorTools.rgb(RANDOM.nextInt(256), RANDOM.nextInt(256), RANDOM.nextInt(256)));
+    }
+
+    public Mouse(int speed, Color color) {
+        this.sprite = new GridSprite(this, getColored(color));
         setSpeed(speed);
     }
 
     @Override
     public void setSpeed(int speed) {
-        this.wait = (1000 / (this.speed = Math.min(Math.max(speed, 1), 20)));
+        this.wait = speed == -1 ? -1 : (1000 / (this.speed = Math.min(Math.max(speed, 1), 20)));
     }
 
     @Override
@@ -65,7 +103,7 @@ public final class Mouse extends GridObject implements IMouse {
     protected void onUnregisterComponents(DragPane pane) {
         pane.removeChild(sprite);
     }
-    
+
     @Override
     public boolean smellsCheese() {
         return getGrid().hasObjectAt(getX(), getY(), Cheese.class);
@@ -82,15 +120,15 @@ public final class Mouse extends GridObject implements IMouse {
             lock.unlock();
         }
     }
-    
+
     private void internalEat() {
         Cheese[] cheeses = getGrid().getObjectsAt(getX(), getY(), Cheese.class);
-        if(cheeses.length == 0) {
+        if (cheeses.length == 0) {
             throw new MouseNoCheeseException(String.format("There is no cheese at (%s, %s)", getX(), getY()));
         }
-        for(int i = 0; i < cheeses.length; i++) {
+        for (int i = 0; i < cheeses.length; i++) {
             Cheese cheese = cheeses[i];
-            if(cheese.isAvailable()) {
+            if (cheese.isAvailable()) {
                 cheese.setAmount(cheese.getAmount() - 1);
                 this.cheese += 1;
                 return;
@@ -110,7 +148,7 @@ public final class Mouse extends GridObject implements IMouse {
             lock.unlock();
         }
     }
-    
+
     @Override
     public boolean canMove() {
         switch (getRotation()) {
@@ -184,7 +222,7 @@ public final class Mouse extends GridObject implements IMouse {
     }
 
     private void sleep() {
-        if (!getGrid().getPanel().isRunning()) {
+        if (!getGrid().getPanel().isRunning() || wait == -1) {
             return;
         }
         try {
